@@ -1,0 +1,213 @@
+ -- สคริปแมพทายคนคนตบหัว -- 
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+
+local Window = Library.CreateLib("ARROW HUB × แมพทายคนตบ", "BloodTheme")
+
+local Tab = Window:NewTab("การตบ")
+
+local Section = Tab:NewSection("ตบทีเดียวตาย")
+
+Section:NewButton("กดเพื่อตบ", "ขมับแม่ง", function()
+    local args = {
+	999
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Hit"):FireServer(unpack(args))
+end)
+
+local Section = Tab:NewSection("ตบเพิ่มเลือด")
+
+Section:NewButton("กดเพื่อตบ", "ขมับติดลบ", function()
+    local args = {
+	-999
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Hit"):FireServer(unpack(args))
+end)
+
+local Tab = Window:NewTab("การดู")
+
+local Section = Tab:NewSection("ดูว่าไผตบ")
+
+local active = false
+local camPos = workspace.CurrentCamera.CFrame
+local loopConn, inputConn
+
+Section:NewButton("ดูว่าใครตบ", "กดอีกครั้งเพื่อปิด", function()
+    active = not active
+    local Camera = workspace.CurrentCamera
+    if active then
+        camPos = Camera.CFrame
+        Camera.CameraType = Enum.CameraType.Scriptable
+        loopConn = game:GetService("RunService").RenderStepped:Connect(function()
+            Camera.CFrame = camPos
+        end)
+        inputConn = game:GetService("UserInputService").InputChanged:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.Touch then
+                local delta = input.Delta
+                local rotate = CFrame.Angles(0, -math.rad(delta.X * 0.5), 0) * CFrame.Angles(-math.rad(delta.Y * 0.5), 0, 0)
+                camPos = camPos * rotate * CFrame.new(-delta.X * 0.05, 0, -delta.Y * 0.05)
+            end
+        end)
+    else
+        if loopConn then loopConn:Disconnect() end
+        if inputConn then inputConn:Disconnect() end
+        Camera.CameraType = Enum.CameraType.Custom
+        Camera.CameraSubject = game.Players.LocalPlayer.Character.Humanoid
+    end
+end)
+
+local Tab = Window:NewTab("ออโต้")
+
+local Section = Tab:NewSection("แย่งคนตบ")
+
+local AutoSlap = false
+
+Section:NewToggle("กดเพื่อแย่งคนตบ", "อย่ากดตอนตัวเองนั่งนะเดี๋ยวตบหัวตัวเอง", function(state)
+    AutoSlap = state
+    
+    if AutoSlap then
+        task.spawn(function()
+            while AutoSlap do
+               
+                local event = game:GetService("ReplicatedStorage"):WaitForChild("Events"):FindFirstChild("Slap")
+                if event then
+                    event:FireServer()
+                end
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+local Section = Tab:NewSection("ออโต้สุ่มกล่องรัวๆ")
+
+_G.AutoCrate = false -- ตัวแปรสำหรับเปิด/ปิดลูป
+
+Section:NewToggle("เพิ่มความชิบหาย", "แลคชิบหายเลย", function(state)
+    _G.AutoCrate = state
+    
+    if state then
+        -- ใช้ task.spawn เพื่อให้ลูปทำงานแยกจาก UI (UI จะได้ไม่ค้าง)
+        task.spawn(function()
+            while _G.AutoCrate do
+                local ReplicatedStorage = game:GetService("ReplicatedStorage")
+                local CreateEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("CreateRE")
+                
+                -- สุ่มกล่อง Common
+                CreateEvent:FireServer("Slap Crate", "Cammon", 6)
+                
+                -- สุ่มกล่อง Rare
+                CreateEvent:FireServer("Slap Crate", "Rare", 6)
+                
+                -- สุ่มกล่อง Epic
+                CreateEvent:FireServer("Slap Crate", "Epic", 6)
+                
+                -- สุ่มกล่อง Legendary
+                CreateEvent:FireServer("Slap Crate", "Legendary", 6)
+                
+                task.wait(0.5) -- แนะนำให้รอสัก 0.5 วินาทีเพื่อป้องกันการโดนเตะ (Kick) ข้อหา Spam Remote
+            end
+        end)
+    end
+end)
+
+local Player = game.Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "AH_MobileUI"
+ScreenGui.Parent = PlayerGui
+ScreenGui.ResetOnSpawn = false  
+
+local AH_Button = Instance.new("TextButton")
+local UICorner = Instance.new("UICorner")
+
+AH_Button.Name = "AH_Button"
+AH_Button.Parent = ScreenGui
+AH_Button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+AH_Button.Position = UDim2.new(0.1, 0, 0.5, 0)
+AH_Button.Size = UDim2.new(0, 60, 0, 60) -- ขนาดวงกลม
+AH_Button.Font = Enum.Font.SourceSansBold
+AH_Button.Text = "AH"
+AH_Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+AH_Button.TextSize = 22
+AH_Button.Active = true
+AH_Button.Draggable = false
+
+UICorner.CornerRadius = UDim.new(1, 0)
+UICorner.Parent = AH_Button
+
+local UIS = game:GetService("UserInputService")
+local dragToggle, dragStart, startPos
+
+AH_Button.InputBegan:Connect(function(input)
+    if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+        dragToggle = true
+        dragStart = input.Position
+        startPos = AH_Button.Position
+    end
+end)
+
+UIS.InputChanged:Connect(function(input)
+    if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) and dragToggle then
+        local delta = input.Position - dragStart
+        AH_Button.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+AH_Button.InputEnded:Connect(function(input)
+    if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+        dragToggle = false
+    end
+end)
+
+AH_Button.MouseButton1Click:Connect(function()
+    if Library and Library.ToggleUI then
+        Library:ToggleUI()
+    else
+        print("ยังไม่ได้โหลด Kavo UI หรือชื่อตัวแปรไม่ตรง")
+    end
+end)
+
+local UIS = game:GetService("UserInputService")
+local function MakeMobileDraggable(gui)
+    local dragging, dragInput, dragStart, startPos
+    gui.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            dragStart = input.Position
+            startPos = gui.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+    gui.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement then
+            dragInput = input
+        end
+    end)
+    UIS.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            gui.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+end
+
+task.spawn(function()
+    local MainFrame = nil
+    while not MainFrame do
+        for _, v in pairs(game.CoreGui:GetChildren()) do
+            if v:IsA("ScreenGui") and v:FindFirstChild("Main") then
+                MainFrame = v.Main
+                break
+            end
+        end
+        task.wait(1)
+    end
+    MainFrame.Active = true
+    MainFrame.Selectable = true
+    MakeMobileDraggable(MainFrame)
+end)
