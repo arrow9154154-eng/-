@@ -1,0 +1,171 @@
+-- สคริปแมพทำลายคุณยาย --
+local lp = game:GetService("Players").LocalPlayer
+local pgui = lp:WaitForChild("PlayerGui")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local Camera = workspace.CurrentCamera
+
+if pgui:FindFirstChild("ArrowHubV8_2") then pgui.ArrowHubV8_2:Destroy() end
+
+local ScreenGui = Instance.new("ScreenGui", pgui)
+ScreenGui.Name = "ArrowHubV8_2"
+ScreenGui.ResetOnSpawn = false
+
+local function makeDraggable(gui)
+    local dragging, dragInput, dragStart, startPos
+    gui.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true; dragStart = input.Position; startPos = gui.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then dragging = false end
+            end)
+        end
+    end)
+    gui.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then dragInput = input end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            gui.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+end
+
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 240, 0, 350)
+MainFrame.Position = UDim2.new(0.5, -120, 0.5, -175)
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+MainFrame.Visible = false
+Instance.new("UICorner", MainFrame)
+Instance.new("UIStroke", MainFrame).Color = Color3.fromRGB(255, 0, 0)
+makeDraggable(MainFrame)
+
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.Text = "ARROW HUB ทำลายคุณยาย"
+Title.TextColor3 = Color3.fromRGB(255, 0, 0)
+Title.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 14
+Instance.new("UICorner", Title)
+
+local ToggleBtn = Instance.new("ImageButton", ScreenGui)
+ToggleBtn.Size = UDim2.new(0, 60, 0, 60)
+ToggleBtn.Position = UDim2.new(0, 20, 0.5, -30)
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+ToggleBtn.Image = "rbxassetid://96992259840286"
+Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(1, 0)
+Instance.new("UIStroke", ToggleBtn).Color = Color3.fromRGB(255, 0, 0)
+makeDraggable(ToggleBtn)
+
+local function createBtn(name, pos)
+    local btn = Instance.new("TextButton", MainFrame)
+    btn.Size = UDim2.new(0.9, 0, 0, 32)
+    btn.Position = pos
+    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    btn.Text = name
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 12
+    Instance.new("UICorner", btn)
+    return btn
+end
+
+local SpeedBtn = createBtn("วิ่งเร็ว (40)", UDim2.new(0.05, 0, 0.15, 0))
+local LineBtn = createBtn("เส้นหาของ (แดง)", UDim2.new(0.05, 0, 0.27, 0))
+local PlayerEspBtn = createBtn("ESP คน (เขียว)", UDim2.new(0.05, 0, 0.39, 0))
+local KeyEspBtn = createBtn("ESP คีย์ (เหลือง)", UDim2.new(0.05, 0, 0.51, 0))
+local ChestEspBtn = createBtn("ESP หีบ (เหลือง)", UDim2.new(0.05, 0, 0.63, 0))
+local TaskEspBtn = createBtn("ESP เควสคุณยาย (ฟ้า)", UDim2.new(0.05, 0, 0.75, 0))
+
+local drawingCache = {}
+_G.speedOn = false
+_G.linesOn = false
+_G.playerEspOn = false
+_G.keyEspOn = false
+_G.chestEspOn = false
+_G.taskEspOn = false
+
+local function setupToggle(btn, varName, onColor)
+    btn.MouseButton1Click:Connect(function()
+        _G[varName] = not _G[varName]
+        btn.BackgroundColor3 = _G[varName] and onColor or Color3.fromRGB(30, 30, 30)
+    end)
+end
+
+setupToggle(SpeedBtn, "speedOn", Color3.fromRGB(150, 0, 0))
+setupToggle(LineBtn, "linesOn", Color3.fromRGB(150, 0, 0))
+setupToggle(PlayerEspBtn, "playerEspOn", Color3.fromRGB(0, 150, 0))
+setupToggle(KeyEspBtn, "keyEspOn", Color3.fromRGB(150, 150, 0))
+setupToggle(ChestEspBtn, "chestEspOn", Color3.fromRGB(150, 150, 0))
+setupToggle(TaskEspBtn, "taskEspOn", Color3.fromRGB(0, 150, 150))
+
+local function getLine(id)
+    if drawingCache[id] then return drawingCache[id] end
+    local l = Drawing.new("Line")
+    l.Thickness = 1.5; l.Transparency = 1; drawingCache[id] = l
+    return l
+end
+
+RunService.RenderStepped:Connect(function()
+    if _G.speedOn and lp.Character and lp.Character:FindFirstChild("Humanoid") then
+        lp.Character.Humanoid.WalkSpeed = 40
+    end
+
+    for _, v in pairs(drawingCache) do v.Visible = false end
+
+    local function processESP(folderName, isEnabled, color, hlName)
+        local folder = workspace.Map:FindFirstChild(folderName)
+        if folder then
+            for _, obj in pairs(folder:GetChildren()) do
+                local p = obj:IsA("BasePart") and obj or obj:FindFirstChildWhichIsA("BasePart")
+                if p and isEnabled then
+                    local hl = obj:FindFirstChild(hlName)
+                    if not hl then
+                        hl = Instance.new("Highlight", obj)
+                        hl.Name = hlName; hl.FillColor = color; hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                    end
+                    local pos, onScreen = Camera:WorldToViewportPoint(p.Position)
+                    if onScreen then
+                        local l = getLine(folderName .. obj:GetDebugId())
+                        l.From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y)
+                        l.To = Vector2.new(pos.X, pos.Y); l.Color = color; l.Visible = true
+                    end
+                else
+                    if obj:FindFirstChild(hlName) then obj[hlName]:Destroy() end
+                end
+            end
+        end
+    end
+
+    processESP("Tools", _G.linesOn, Color3.fromRGB(255, 0, 0), "ArrowHL")
+    processESP("Keys", _G.keyEspOn, Color3.fromRGB(255, 255, 0), "KeyHL")
+    processESP("Chests", _G.chestEspOn, Color3.fromRGB(255, 255, 0), "ChestHL")
+    processESP("TaskItems", _G.taskEspOn, Color3.fromRGB(0, 255, 255), "TaskHL")
+
+    if _G.playerEspOn then
+        for _, plr in pairs(Players:GetPlayers()) do
+            if plr ~= lp and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+                local char = plr.Character
+                if not char:FindFirstChild("PlayerHL") then
+                    local hl = Instance.new("Highlight", char)
+                    hl.Name = "PlayerHL"; hl.FillColor = Color3.fromRGB(0, 255, 0); hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                end
+                local pos, onScreen = Camera:WorldToViewportPoint(char.HumanoidRootPart.Position)
+                if onScreen then
+                    local l = getLine("Player_" .. plr.Name)
+                    l.From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y)
+                    l.To = Vector2.new(pos.X, pos.Y); l.Color = Color3.fromRGB(0, 255, 0); l.Visible = true
+                end
+            end
+        end
+    else
+        for _, plr in pairs(Players:GetPlayers()) do
+            if plr.Character and plr.Character:FindFirstChild("PlayerHL") then plr.Character.PlayerHL:Destroy() end
+        end
+    end
+end)
+
+ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
