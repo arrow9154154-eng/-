@@ -1,0 +1,108 @@
+local _v1 = function(s) local r = "" for i = 1, #s do r = r .. string.char(string.byte(s, i)) end return r end
+
+local Library = loadstring(game:HttpGet(_v1("\104\116\116\112\115\58\47\47\114\97\119\46\103\105\116\104\117\98\117\115\101\114\99\111\110\116\101\110\116\46\99\111\109\47\120\72\101\112\116\99\47\75\97\118\111\45\85\73\45\76\105\98\114\97\114\121\47\109\97\105\110\47\115\111\117\114\99\101\46\108\117\97")))()
+
+local Window = Library.CreateLib("\65\82\82\79\87\32\72\85\66\32\120\32\71\117\101\115\115\32\83\108\97\112\112\101\114", "BloodTheme")
+
+local Tab1 = Window:NewTab("Slapping")
+local Sec1 = Tab1:NewSection("Instant Kill")
+Sec1:NewButton("Kill Slap", "One hit to die", function()
+    game:GetService("\82\101\112\108\105\99\97\116\101\100\83\116\111\114\97\103\101"):WaitForChild("\69\118\101\110\116\115"):WaitForChild("\72\105\116"):FireServer(unpack({999}))
+end)
+
+local Sec2 = Tab1:NewSection("Heal Slap")
+Sec2:NewButton("Heal Slap", "Slap to give health", function()
+    game:GetService("\82\101\112\108\105\99\97\116\101\100\83\116\111\114\97\103\101"):WaitForChild("\69\118\101\110\116\115"):WaitForChild("\72\105\116"):FireServer(unpack({-999}))
+end)
+
+local Tab2 = Window:NewTab("Camera View")
+local Sec3 = Tab2:NewSection("Spectate Slapper")
+local active = false
+local camPos = workspace.CurrentCamera.CFrame
+local loopConn, inputConn
+
+Sec3:NewButton("Free Cam", "Toggle Free Camera", function()
+    active = not active
+    local Camera = workspace.CurrentCamera
+    if active then
+        camPos = Camera.CFrame
+        Camera.CameraType = Enum.CameraType.Scriptable
+        loopConn = game:GetService("RunService").RenderStepped:Connect(function() Camera.CFrame = camPos end)
+        inputConn = game:GetService("UserInputService").InputChanged:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.Touch then
+                local delta = input.Delta
+                local rotate = CFrame.Angles(0, -math.rad(delta.X * 0.5), 0) * CFrame.Angles(-math.rad(delta.Y * 0.5), 0, 0)
+                camPos = camPos * rotate * CFrame.new(-delta.X * 0.05, 0, -delta.Y * 0.05)
+            end
+        end)
+    else
+        if loopConn then loopConn:Disconnect() end
+        if inputConn then inputConn:Disconnect() end
+        Camera.CameraType = Enum.CameraType.Custom
+        Camera.CameraSubject = game.Players.LocalPlayer.Character.Humanoid
+    end
+end)
+
+local Tab3 = Window:NewTab("Automation")
+local Sec4 = Tab3:NewSection("Auto Steal Slap")
+local AutoSlap = false
+Sec4:NewToggle("Steal Slap", "Auto slap everything", function(state)
+    AutoSlap = state
+    if AutoSlap then
+        task.spawn(function()
+            while AutoSlap do
+                local ev = game:GetService("\82\101\112\108\105\99\97\116\101\100\83\116\111\114\97\103\101"):WaitForChild("\69\118\101\110\116\115"):FindFirstChild("\83\108\97\112")
+                if ev then ev:FireServer() end
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+local Sec5 = Tab3:NewSection("Auto Open Crates")
+_G.AutoCrate = false
+Sec5:NewToggle("Spam All Crates", "Very Laggy!", function(state)
+    _G.AutoCrate = state
+    if state then
+        task.spawn(function()
+            while _G.AutoCrate do
+                local RE = game:GetService("\82\101\112\108\105\99\97\116\101\100\83\116\111\114\97\103\101"):WaitForChild("\69\118\101\110\116\115"):WaitForChild("\67\114\101\97\116\101\82\69")
+                RE:FireServer("Slap Crate", "Common", 6)
+                RE:FireServer("Slap Crate", "Rare", 6)
+                RE:FireServer("Slap Crate", "Epic", 6)
+                RE:FireServer("Slap Crate", "Legendary", 6)
+                task.wait(0.5)
+            end
+        end)
+    end
+end)
+
+local Player = game.Players.LocalPlayer
+local ScreenGui = Instance.new("ScreenGui", Player:WaitForChild("PlayerGui"))
+ScreenGui.Name = "AH_Mobile"
+ScreenGui.ResetOnSpawn = false
+
+local AH_Btn = Instance.new("TextButton", ScreenGui)
+Instance.new("UICorner", AH_Btn).CornerRadius = UDim.new(1, 0)
+AH_Btn.Size = UDim2.new(0, 60, 0, 60)
+AH_Btn.Position = UDim2.new(0.1, 0, 0.5, 0)
+AH_Btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+AH_Btn.Text = "AH"
+AH_Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+AH_Btn.TextSize = 22
+
+local UIS = game:GetService("UserInputService")
+local dragToggle, dragStart, startPos
+AH_Btn.InputBegan:Connect(function(input)
+    if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+        dragToggle = true; dragStart = input.Position; startPos = AH_Btn.Position
+    end
+end)
+UIS.InputChanged:Connect(function(input)
+    if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) and dragToggle then
+        local delta = input.Position - dragStart
+        AH_Btn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+AH_Btn.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then dragToggle = false end end)
+AH_Btn.MouseButton1Click:Connect(function() Library:ToggleUI() end)
