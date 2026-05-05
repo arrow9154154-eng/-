@@ -1,0 +1,1 @@
+local _0x1 = function(s) local r = "" for i = 1, #s do r = r .. string.char(string.byte(s, i)) end return r end
