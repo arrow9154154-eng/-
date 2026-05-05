@@ -1,0 +1,3 @@
+local function createButton(name, pos)
+    local btn = Instance.new(_0x1("\84\101\120\116\66\117\116\116\111\110"), MainFrame)
+    btn.Size = UDim2.new(0.9, 0, 0, 45); btn.Position = pos; btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30); btn.Text = name .. _0x1("\58\32\79\70\70"); btn.TextColor3 = Color3.fromRGB(255, 255, 255); btn.Font = Enum.Font.GothamBold; btn.TextSize = 14
