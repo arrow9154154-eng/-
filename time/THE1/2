@@ -1,5 +1,0 @@
-local lp = game:GetService(_0x1("\80\108\97\121\101\114\115")).LocalPlayer
-local pgui = lp:WaitForChild(_0x1("\80\108\97\121\101\114\71\117\105"))
-local UserInputService = game:GetService(_0x1("\85\115\101\114\73\110\112\117\116\83\101\114\118\105\99\101"))
-local RunService = game:GetService(_0x1("\82\117\110\83\101\114\118\105\99\101"))
-local Camera = workspace.CurrentCamera
