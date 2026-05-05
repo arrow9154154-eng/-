@@ -1,3 +1,0 @@
- Instance.new(_0x1("\85\73\67\111\114\110\101\114"), btn); local st = Instance.new(_0x1("\85\73\83\116\114\111\107\101"), btn); st.Color = Color3.fromRGB(60, 60, 60)
-    return btn, st
-end

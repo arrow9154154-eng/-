@@ -1,7 +1,0 @@
-local Settings = {
-    Aimbot = false,
-    TeamCheck = false,
-    KillCheck = false,
-    FovRadius = 100
-}
-

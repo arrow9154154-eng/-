@@ -1,2 +1,0 @@
-local ah_name = _0x1("\65\114\114\111\119\72\117\98\65\109\98\111\116")
-if pgui:FindFirstChild(ah_name) then pgui[ah_name]:Destroy() end

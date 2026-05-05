@@ -1,7 +1,0 @@
-local FovCircle = Drawing.new(_0x1("\67\105\114\99\108\101"))
-FovCircle.Color = Color3.fromRGB(255, 0, 0)
-FovCircle.Thickness = 1
-FovCircle.NumSides = 64
-FovCircle.Radius = Settings.FovRadius
-FovCircle.Visible = false
-FovCircle.Filled = false
