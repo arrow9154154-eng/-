@@ -1,0 +1,2 @@
+ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
+FovInput.FocusLost:Connect(function() local val = tonumber(FovInput.Text) if val then Settings.FovRadius = val FovCircle.Radius = val end end)
