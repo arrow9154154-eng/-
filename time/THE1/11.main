@@ -1,0 +1,2 @@
+local MainFrame = Instance.new(_0x1("\70\114\97\109\101"), ScreenGui); MainFrame.Size = UDim2.new(0, 250, 0, 320); MainFrame.Position = UDim2.new(0.5, -125, 0.5, -160); MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15); MainFrame.Visible = false
+Instance.new(_0x1("\85\73\67\111\114\110\101\114"), MainFrame); Instance.new(_0x1("\85\73\83\116\114\111\107\101"), MainFrame).Color = Color3.fromRGB(255, 0, 0); makeDraggable(MainFrame)
