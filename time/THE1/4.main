@@ -1,0 +1,3 @@
+local ScreenGui = Instance.new(_0x1("\83\99\114\101\101\110\71\117\105"), pgui)
+ScreenGui.Name = ah_name
+ScreenGui.ResetOnSpawn = false
