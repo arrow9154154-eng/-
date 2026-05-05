@@ -1,0 +1,125 @@
+local _0x1 = function(s) local r = "" for i = 1, #s do r = r .. string.char(string.byte(s, i)) end return r end
+
+local lp = game:GetService(_0x1("\80\108\97\121\101\114\115")).LocalPlayer
+local pgui = lp:WaitForChild(_0x1("\80\108\97\121\101\114\71\117\105"))
+local UserInputService = game:GetService(_0x1("\85\115\101\114\73\110\112\117\116\83\101\114\118\105\99\101"))
+local RunService = game:GetService(_0x1("\82\117\110\83\101\114\118\105\99\101"))
+local Camera = workspace.CurrentCamera
+
+local ah_name = _0x1("\65\114\114\111\119\72\117\98\65\109\98\111\116")
+if pgui:FindFirstChild(ah_name) then pgui[ah_name]:Destroy() end
+
+local ScreenGui = Instance.new(_0x1("\83\99\114\101\101\110\71\117\105"), pgui)
+ScreenGui.Name = ah_name
+ScreenGui.ResetOnSpawn = false
+
+local Settings = {
+    Aimbot = false,
+    TeamCheck = false,
+    KillCheck = false,
+    FovRadius = 100
+}
+
+local FovCircle = Drawing.new(_0x1("\67\105\114\99\108\101"))
+FovCircle.Color = Color3.fromRGB(255, 0, 0)
+FovCircle.Thickness = 1
+FovCircle.NumSides = 64
+FovCircle.Radius = Settings.FovRadius
+FovCircle.Visible = false
+FovCircle.Filled = false
+
+local function makeDraggable(gui)
+    local dragging, dragInput, dragStart, startPos
+    gui.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true; dragStart = input.Position; startPos = gui.Position
+            input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end)
+        end
+    end)
+    gui.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then dragInput = input end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            gui.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+end
+
+local ToggleBtn = Instance.new(_0x1("\73\109\97\103\101\66\117\116\116\111\110"), ScreenGui)
+ToggleBtn.Size = UDim2.new(0, 60, 0, 60); ToggleBtn.Position = UDim2.new(0.1, 0, 0.5, 0); ToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20); ToggleBtn.Image = _0x1("\114\98\120\97\115\115\101\116\105\100\58\47\47\57\54\57\57\50\50\53\57\56\52\48\50\56\54")
+Instance.new(_0x1("\85\73\67\111\114\110\101\114"), ToggleBtn).CornerRadius = UDim.new(1, 0); Instance.new(_0x1("\85\73\83\116\114\111\107\101"), ToggleBtn).Color = Color3.fromRGB(255, 0, 0); makeDraggable(ToggleBtn)
+
+local MainFrame = Instance.new(_0x1("\70\114\97\109\101"), ScreenGui); MainFrame.Size = UDim2.new(0, 250, 0, 320); MainFrame.Position = UDim2.new(0.5, -125, 0.5, -160); MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15); MainFrame.Visible = false
+Instance.new(_0x1("\85\73\67\111\114\110\101\114"), MainFrame); Instance.new(_0x1("\85\73\83\116\114\111\107\101"), MainFrame).Color = Color3.fromRGB(255, 0, 0); makeDraggable(MainFrame)
+
+local Title = Instance.new(_0x1("\84\101\120\116\76\97\98\101\108"), MainFrame); Title.Size = UDim2.new(1, 0, 0, 40); Title.Text = _0x1("\65\82\82\79\87\32\72\85\66\32\65\73\77\66\79\84"); Title.TextColor3 = Color3.fromRGB(255, 0, 0); Title.BackgroundColor3 = Color3.fromRGB(10, 10, 10); Title.Font = Enum.Font.GothamBold; Title.TextSize = 14; Instance.new(_0x1("\85\73\67\111\114\110\101\114"), Title)
+
+local FovInput = Instance.new(_0x1("\84\101\120\116\66\111\120"), MainFrame); FovInput.Size = UDim2.new(0.9, 0, 0, 40); FovInput.Position = UDim2.new(0.05, 0, 0.15, 0); FovInput.BackgroundColor3 = Color3.fromRGB(30, 30, 30); FovInput.Text = "100"; FovInput.PlaceholderText = _0x1("\70\79\86\32\82\97\100\105\117\115\46\46\46"); FovInput.TextColor3 = Color3.fromRGB(255, 255, 255); FovInput.Font = Enum.Font.GothamBold; Instance.new(_0x1("\85\73\67\111\114\110\101\114"), FovInput); Instance.new(_0x1("\85\73\83\116\114\111\107\101"), FovInput).Color = Color3.fromRGB(60, 60, 60)
+
+local function createButton(name, pos)
+    local btn = Instance.new(_0x1("\84\101\120\116\66\117\116\116\111\110"), MainFrame)
+    btn.Size = UDim2.new(0.9, 0, 0, 45); btn.Position = pos; btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30); btn.Text = name .. _0x1("\58\32\79\70\70"); btn.TextColor3 = Color3.fromRGB(255, 255, 255); btn.Font = Enum.Font.GothamBold; btn.TextSize = 14
+    Instance.new(_0x1("\85\73\67\111\114\110\101\114"), btn); local st = Instance.new(_0x1("\85\73\83\116\114\111\107\101"), btn); st.Color = Color3.fromRGB(60, 60, 60)
+    return btn, st
+end
+
+local AimBtn, AimSt = createButton(_0x1("\65\105\109\98\111\116\32\77\97\115\116\101\114"), UDim2.new(0.05, 0, 0.35, 0))
+local TeamBtn, TeamSt = createButton(_0x1("\84\101\97\109\32\67\104\101\99\107"), UDim2.new(0.05, 0, 0.55, 0))
+local KillBtn, KillSt = createButton(_0x1("\65\108\105\118\101\32\67\104\101\99\107"), UDim2.new(0.05, 0, 0.75, 0))
+
+ToggleBtn.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
+FovInput.FocusLost:Connect(function() local val = tonumber(FovInput.Text) if val then Settings.FovRadius = val FovCircle.Radius = val end end)
+
+AimBtn.MouseButton1Click:Connect(function()
+    Settings.Aimbot = not Settings.Aimbot
+    FovCircle.Visible = Settings.Aimbot
+    AimBtn.Text = _0x1("\65\105\109\98\111\116\32\77\97\115\116\101\114\58\32") .. (Settings.Aimbot and "ON" or "OFF")
+    AimBtn.BackgroundColor3 = Settings.Aimbot and Color3.fromRGB(150, 0, 0) or Color3.fromRGB(30, 30, 30)
+    AimSt.Color = Settings.Aimbot and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(60, 60, 60)
+end)
+
+TeamBtn.MouseButton1Click:Connect(function()
+    Settings.TeamCheck = not Settings.TeamCheck
+    TeamBtn.Text = _0x1("\84\101\97\109\32\67\104\101\99\107\58\32") .. (Settings.TeamCheck and "ON" or "OFF")
+    TeamBtn.BackgroundColor3 = Settings.TeamCheck and Color3.fromRGB(150, 0, 0) or Color3.fromRGB(30, 30, 30)
+    TeamSt.Color = Settings.TeamCheck and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(60, 60, 60)
+end)
+
+KillBtn.MouseButton1Click:Connect(function()
+    Settings.KillCheck = not Settings.KillCheck
+    KillBtn.Text = _0x1("\65\108\105\118\101\32\67\104\101\99\107\58\32") .. (Settings.KillCheck and "ON" or "OFF")
+    KillBtn.BackgroundColor3 = Settings.KillCheck and Color3.fromRGB(150, 0, 0) or Color3.fromRGB(30, 30, 30)
+    KillSt.Color = Settings.KillCheck and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(60, 60, 60)
+end)
+
+local function GetClosest()
+    local target, shortestDist = nil, Settings.FovRadius
+    for _, v in pairs(game.Players:GetPlayers()) do
+        if v ~= lp and v.Character and v.Character:FindFirstChild(_0x1("\72\101\97\100")) then
+            if Settings.TeamCheck and v.Team == lp.Team then continue end
+            if Settings.KillCheck and v.Character:FindFirstChild(_0x1("\72\117\109\97\110\111\105\100")) and v.Character.Humanoid.Health <= 0 then continue end
+            
+            local pos, vis = Camera:WorldToViewportPoint(v.Character.Head.Position)
+            if vis then
+                local mag = (Vector2.new(pos.X, pos.Y) - Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2)).Magnitude
+                if mag < shortestDist then
+                    target = v
+                    shortestDist = mag
+                end
+            end
+        end
+    end
+    return target
+end
+
+RunService.RenderStepped:Connect(function()
+    FovCircle.Position = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2)
+    if Settings.Aimbot then
+        local t = GetClosest()
+        if t and t.Character and t.Character:FindFirstChild(_0x1("\72\101\97\100")) then
+            Camera.CFrame = CFrame.new(Camera.CFrame.Position, t.Character.Head.Position)
+        end
+    end
+end)
