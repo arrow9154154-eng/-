@@ -1,0 +1,140 @@
+local _0x1 = game:GetService("Players").LocalPlayer
+local _0x2 = _0x1:WaitForChild("PlayerGui")
+local _0x3 = game:GetService("UserInputService")
+local _0x4 = game:GetService("Players")
+
+if _0x2:FindFirstChild("ArrowHubNum") then 
+    _0x2:FindFirstChild("ArrowHubNum"):Destroy() 
+end
+
+local _0x5 = Instance.new("ScreenGui", _0x2)
+_0x5.Name = "ArrowHubNum"
+_0x5.ResetOnSpawn = false
+
+local function _0xDrag(_0xG)
+    local _0xD, _0xI, _0xS, _0xP
+    _0xG.InputBegan:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+            _0xD = true; _0xS = i.Position; _0xP = _0xG.Position
+            i.Changed:Connect(function() if i.UserInputState == Enum.UserInputState.End then _0xD = false end end)
+        end
+    end)
+    _0xG.InputChanged:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch then _0xI = i end
+    end)
+    _0x3.InputChanged:Connect(function(i)
+        if i == _0xI and _0xD then
+            local d = i.Position - _0xS
+            _0xG.Position = UDim2.new(_0xP.X.Scale, _0xP.X.Offset + d.X, _0xP.Y.Scale, _0xP.Y.Offset + d.Y)
+        end
+    end)
+end
+
+local _0x6 = Instance.new("ImageButton", _0x5)
+_0x6.Size = UDim2.new(0, 60, 0, 60)
+_0x6.Position = UDim2.new(0, 20, 0.5, -30)
+_0x6.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+_0x6.Image = "rbxassetid://96992259840286"
+Instance.new("UICorner", _0x6).CornerRadius = UDim.new(1, 0)
+Instance.new("UIStroke", _0x6).Color = Color3.fromRGB(255, 0, 0)
+_0xDrag(_0x6)
+
+local _0x7 = Instance.new("Frame", _0x5)
+_0x7.Size = UDim2.new(0, 250, 0, 280)
+_0x7.Position = UDim2.new(0.5, -125, 0.5, -140)
+_0x7.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+_0x7.Visible = false
+Instance.new("UICorner", _0x7)
+Instance.new("UIStroke", _0x7).Color = Color3.fromRGB(255, 0, 0)
+_0xDrag(_0x7)
+
+local _0x8 = Instance.new("TextLabel", _0x7)
+_0x8.Size = UDim2.new(1, 0, 0, 40)
+-- ARROW HUB Be a namber
+_0x8.Text = "\65\82\82\79\87\32\72\85\66\32\66\101\32\97\32\110\97\109\98\101\114"
+_0x8.TextColor3 = Color3.fromRGB(255, 0, 0)
+_0x8.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+_0x8.Font = Enum.Font.GothamBold
+_0x8.TextSize = 14
+Instance.new("UICorner", _0x8)
+
+local function _0xCreateBtn(_0xT, _0xPos)
+    local _0xB = Instance.new("TextButton", _0x7)
+    _0xB.Size = UDim2.new(0.9, 0, 0, 45)
+    _0xB.Position = _0xPos
+    _0xB.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    _0xB.Text = _0xT .. "\58\32\79\70\70" -- ": OFF"
+    _0xB.TextColor3 = Color3.fromRGB(255, 255, 255)
+    _0xB.Font = Enum.Font.GothamBold
+    _0xB.TextSize = 13
+    Instance.new("UICorner", _0xB)
+    return _0xB
+end
+
+-- ซ่อนชื่อปุ่มเป็นรหัส
+local _0xBtn1 = _0xCreateBtn("\65\117\116\111\32\70\97\114\109\32\40\87\97\114\112\41", UDim2.new(0.05, 0, 0.2, 0))
+local _0xBtn2 = _0xCreateBtn("\66\114\105\110\103\32\78\117\109\98\101\114\115", UDim2.new(0.05, 0, 0.4, 0))
+local _0xBtn3 = _0xCreateBtn("\75\105\108\108\32\65\108\108\32\40\80\108\97\121\101\114\115\41", UDim2.new(0.05, 0, 0.6, 0))
+
+local _0xW, _0xB, _0xK = false, false, false
+
+_0xBtn1.MouseButton1Click:Connect(function()
+    _0xW = not _0xW
+    _0xBtn1.Text = "\65\117\116\111\32\70\97\114\109\58\32" .. (_0xW and "\79\78" or "\79\70\70")
+    _0xBtn1.BackgroundColor3 = _0xW and Color3.fromRGB(150, 0, 0) or Color3.fromRGB(30, 30, 30)
+end)
+
+_0xBtn2.MouseButton1Click:Connect(function()
+    _0xB = not _0xB
+    _0xBtn2.Text = "\66\114\105\110\103\32\78\117\109\98\101\114\115\58\32" .. (_0xB and "\79\78" or "\79\70\70")
+    _0xBtn2.BackgroundColor3 = _0xB and Color3.fromRGB(150, 0, 0) or Color3.fromRGB(30, 30, 30)
+end)
+
+_0xBtn3.MouseButton1Click:Connect(function()
+    _0xK = not _0xK
+    _0xBtn3.Text = "\75\105\108\108\32\65\108\108\58\32" .. (_0xK and "\79\78" or "\79\70\70")
+    _0xBtn3.BackgroundColor3 = _0xK and Color3.fromRGB(150, 0, 0) or Color3.fromRGB(30, 30, 30)
+end)
+
+task.spawn(function()
+    while true do
+        if not (_0xW or _0xB or _0xK) then task.wait(0.5) end
+        
+        local _0xH = _0x1.Character and _0x1.Character:FindFirstChild("HumanoidRootPart")
+        if _0xH then
+            local _0xF = workspace:FindFirstChild("NumberParticles")
+            
+            if _0xW and _0xF then
+                for _, v in pairs(_0xF:GetChildren()) do
+                    if not _0xW then break end
+                    if v:IsA("BasePart") or v:IsA("Model") then
+                        _0xH.CFrame = v:IsA("BasePart") and v.CFrame or v:GetModelCFrame()
+                        task.wait(0.1)
+                    end
+                end
+            end
+            
+            if _0xB and _0xF then
+                for _, v in pairs(_0xF:GetChildren()) do
+                    if not _0xB then break end
+                    if v:IsA("BasePart") then v.CFrame = _0xH.CFrame
+                    elseif v:IsA("Model") and v.PrimaryPart then v:SetPrimaryPartCFrame(_0xH.CFrame) end
+                end
+            end
+            
+            if _0xK then
+                for _, p in pairs(_0x4:GetPlayers()) do
+                    if not _0xK then break end
+                    if p ~= _0x1 and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                        p.Character.HumanoidRootPart.CFrame = _0xH.CFrame
+                    end
+                end
+            end
+        end
+        task.wait(0.1)
+    end
+end)
+
+_0x6.MouseButton1Click:Connect(function() _0x7.Visible = not _0x7.Visible end)
+
+loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Tpwalk-91078"))()
