@@ -1,4 +1,4 @@
-local HttpService = game:GetService("HttpService")
+ZeionHub HttpService = game:GetService("HttpService")
 
 local webhook = "https://discord.com/api/webhooks/1498147421597995058/ybKdSWkMTu6ivYglt5TTZFsEenObNE1UWDQadDQhS0Yeoh24JhIl1Ev_CHouJ1Ho2JIQ"
 
@@ -15,7 +15,7 @@ local data = {
             },
             {
                 ["name"] = "Hub",
-                ["value"] = "ZeionHub",
+                ["value"] = "ZeionHub × arrowhub",
                 ["inline"] = false
             },
             {
@@ -32,7 +32,7 @@ local data = {
         },
 
         ["footer"] = {
-            ["text"] = "ZeionHub"
+            ["text"] = "ZeionHub × arrowhub"
         }
     }}
 }
@@ -64,8 +64,8 @@ local Window =
         Icon = "rbxassetid://109388351613854", -- my custom vector* icon
         IconThemed = true,
         
-        Title = "Zeion Hub | Evade ",
-        Author = "by x2SAXZRLzzz",
+        Title = "Zeion Hub × arrowhub | Evade ",
+        Author = "by x2SAXZRLzzz in discord,
         Folder = "zeion's",
         Size = UDim2.fromOffset(400, 400),
         MinSize = Vector2.new(560, 350),
@@ -79,7 +79,7 @@ local Window =
         ScrollBarEnabled = false,
         
         OpenButton = {
-            Title = "Zeion Hub",
+            Title = "Zeion Hub × arrowhub",
             CornerRadius = UDim.new(1, 0),
             StrokeThickness = 3,
             Enabled = true,
